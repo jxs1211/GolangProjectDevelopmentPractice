@@ -680,7 +680,7 @@ endless.ListenAndServe(":4242", router)
 
 借助第三方包的好处是可以稍微减少一些编码工作量，但缺点是引入了一个新的依赖包，因此我更倾向于自己编码实现。Go 1.8 版本或者更新的版本，http.Server 内置的 Shutdown 方法，已经实现了优雅关闭。下面是一个示例：
 
-```
+```go
 // +build go1.8
 
 package main
