@@ -28,15 +28,13 @@ wrk 的安装很简单，一共可分为两步。
 
 第一步，Clone wrk repo：
 
-```
-
+```shell
 $ git clone https://github.com/wg/wrk
 ```
 
 第二步，编译并安装：
 
-```
-
+```shell
 $ cd wrk
 $ make
 $ sudo cp ./wrk /usr/bin
@@ -46,8 +44,7 @@ $ sudo cp ./wrk /usr/bin
 
 这里我们来看下 wrk 的使用方法。wrk 使用起来不复杂，执行wrk --help可以看到 wrk 的所有运行参数：
 
-```
-
+```shell
 $ wrk --help
 Usage: wrk <options> <url>
   Options:
@@ -79,8 +76,7 @@ Usage: wrk <options> <url>
 
 一个简单的测试如下（确保 iam-apiserver 已经启动，并且开启了健康检查）：
 
-```
-
+```shell
 $ wrk -t144 -c30000 -d30s -T30s --latency http://10.0.4.57:8080/healthz
 Running 30s test @ http://10.0.4.57:8080/healthz
   144 threads and 30000 connections
@@ -129,8 +125,7 @@ Transfer/sec:     13.70MB
 
 在做 API Server 的性能测试时，需要先执行 wrk，生成性能测试数据。为了能够更直观地查看性能数据，我们还需要以图表的方式展示这些性能数据。这一讲，我使用 gnuplot 工具来自动化地绘制这些性能图，为此我们需要确保 Linux 服务器已经安装了 gnuplot 工具。你可以通过以下方式安装：
 
-```
-
+```shell
 $ sudo yum -y install gnuplot
 ```
 
@@ -142,8 +137,7 @@ QPS & TTLB 图：X轴为并发数（Concurrent），Y轴为每秒查询数（QPS
 
 为了方便你测试 API 接口性能，我将性能测试和绘图逻辑封装在scripts/wrktest.sh脚本中，你可以在 iam 源码根目录下执行如下命令，生成性能测试数据和性能图表：
 
-```
-
+```shell
 $ scripts/wrktest.sh http://10.0.4.57:8080/healthz
 ```
 
@@ -159,8 +153,7 @@ wrktest.sh 默认会测试多个并发下的 API 性能，默认测试的并发�
 
 wrktest.sh 的使用方法如下：
 
-```
-
+```shell
 $ scripts/wrktest.sh -h
 
 Usage: scripts/wrktest.sh [OPTION] [diff] URL
@@ -193,8 +186,7 @@ wrktest.sh 的主要功能有两个，分别是运行性能测试并获取结果
 
 执行如下命令：
 
-```
-
+```shell
 $ scripts/wrktest.sh http://10.0.4.57:8080/healthz
 Running wrk command: wrk -t3 -d300s -T30s --latency -c 200 http://10.0.4.57:8080/healthz
 Running wrk command: wrk -t3 -d300s -T30s --latency -c 500 http://10.0.4.57:8080/healthz
@@ -226,8 +218,7 @@ Success rate graphic file is: /home/colin/_output/wrk/apiserver_successrate.pngz
 
 执行如下命令，对比两次测试结果：
 
-```
-
+```shell
 $ scripts/wrktest.sh diff _output/wrk/apiserver.dat _output/wrk/http.dat
 ```
 
@@ -251,8 +242,7 @@ apiserver.dat和http.dat是两个需要对比的 Wrk 性能数据文件。上述
 
 关闭 Debug 配置选项之后，就可以执行wrktest.sh命令测试 API 性能了（默认测试的并发数为200 500 1000 3000 5000 10000 15000 20000 25000 50000）:
 
-```
-
+```shell
 $ scripts/wrktest.sh http://10.0.4.57:8080/healthz
 ```
 
@@ -272,8 +262,7 @@ $ scripts/wrktest.sh http://10.0.4.57:8080/healthz
 
 这里用 net/http 构建最简单的 HTTP 服务器，使用相同的测试工具和测试服务器，测试性能并作对比。HTTP 服务源码为（位于文件tools/httptest/main.go中）：
 
-```
-
+```go
 package main
 
 import (
@@ -320,8 +309,7 @@ $ scripts/wrktest.sh -n http http://10.0.4.57:6667/healthz
 
 第三步，对比两次性能测试数据：
 
-```
-
+```shell
 $ scripts/wrktest.sh diff _output/wrk/apiserver.dat _output/wrk/http.dat
 ```
 
