@@ -5,7 +5,6 @@
 下面给你举个例子，你就会理解低质量的 Makefile 文件是什么样的了。
 
 ```
-
 build: clean vet
   @mkdir -p ./Role
   @export GOOS=linux && go build -v .
