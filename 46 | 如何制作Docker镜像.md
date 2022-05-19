@@ -128,8 +128,7 @@ Docker 匹配缓存镜像的规则为：遍历缓存中的基础镜像及其子�
 
 docker save用来将镜像保存为一个 tar 文件，docker load用来将 tar 格式的镜像文件加载到当前机器上，例如：
 
-```
-
+```shell
 # 在 A 机器上执行，并将 nginx-v1.0.0.tar.gz 复制到 B 机器
 $ docker save nginx | gzip > nginx-v1.0.0.tar.gz
 
@@ -143,8 +142,7 @@ $ docker load -i nginx-v1.0.0.tar.gz
 
 我们先通过docker export 保存镜像，再通过docker import 加载镜像，具体命令如下：
 
-```
-
+```shell
 # 在 A 机器上执行，并将 nginx-v1.0.0.tar.gz 复制到 B 机器
 $ docker export nginx > nginx-v1.0.0.tar.gz
 
@@ -161,7 +159,6 @@ $ docker import - nginx:v1.0.0 nginx-v1.0.0.tar.gz
 Dockerfile 指令的基本格式如下：
 
 ```
-
 # Comment
 INSTRUCTION arguments
 ```
@@ -186,7 +183,7 @@ INSTRUCTION是指令，不区分大小写，但我的建议是指令都大写，
 
 例子
 
-```
+```dockerfile
 # 第一行必须指定构建该镜像所基于的容器镜像
 FROM centos:centos8
 
@@ -227,10 +224,17 @@ Docker 会顺序解释并执行 Dockerfile 中的指令，并且第一条指令�
 
 - 优先使用COPY而非ADD指令。和ADD相比，COPY 功能简单，而且也够用。ADD可变的行为会导致该指令的行为不清晰，不利于后期维护和理解。Dockerfile不同部分需要使用不同文件时，不要一次性将这些文件复制到镜像中，而是需要时逐个添加，这样也有利于充分利用缓存。另外考虑镜像大小的问题，不推荐用ADD url的方式获取远程压缩包，应该是用RUN wget或RUN curl代替，这样可以删除压缩后不再需要的文件，并且不需要在镜像中添加一层，例如：
   
-
+![image-20220519100603929](C:\Users\xjshen\AppData\Roaming\Typora\typora-user-images\image-20220519100603929.png)
+  
+  另外，尽量使用是docker volume共享文件，而不要使用ADD\COPY添加文件到镜像中。
+  
 - 推荐将CMD和ENTRYPOINT指令结合使用，使用 execl 格式的ENTRYPOINT指令设置固定的默认命令和参数，然后使用CMD指令设置可变的参数。
 
-- 尽量使用 Dockerfile 共享镜像。通过共享 Dockerfile，可以使开发者明确知道 Docker 镜像的构建过程，并且可以将 Dockerfile 文件加入版本控制，跟踪起来。
+- 尽量使用 Dockerfile 共享镜像。
+
+  - 通过共享 Dockerfile，可以使开发者明确知道 Docker 镜像的构建过程
+  - 并且可以将 Dockerfile 文件加入版本控制，跟踪起来。
+  - 使用Dockerfile构建的镜像具有确定性
 
 - 使用.dockerignore忽略构建镜像时非必需的文件。忽略无用的文件，可以提高构建速度。
 
@@ -254,7 +258,11 @@ ENTRYPOINT ["/bin/iam"]
 CMD ["--help"]
 ```
 
+![image-20220519101304529](C:\Users\xjshen\AppData\Roaming\Typora\typora-user-images\image-20220519101304529.png)
 
+![image-20220519102534899](C:\Users\xjshen\AppData\Roaming\Typora\typora-user-images\image-20220519102534899.png)
+
+![image-20220519102545551](C:\Users\xjshen\AppData\Roaming\Typora\typora-user-images\image-20220519102545551.png)
 
 **总结**
 
